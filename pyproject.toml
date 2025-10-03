@@ -7,7 +7,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["ebooklib (>=0.19,<0.20)", "beautifulsoup4 (>=4.14.2,<5.0.0)", "gtts (>=2.5.4,<3.0.0)"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

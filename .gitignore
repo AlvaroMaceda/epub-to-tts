@@ -10,7 +10,7 @@ __pycache__/
 venv/
 
 # Poetry
-poetry.lock
+# poetry.lock
 
 # Audio output
 audio_chapters/
