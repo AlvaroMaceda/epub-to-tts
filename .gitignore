@@ -1,0 +1,28 @@
+*.epub
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env
+venv/
+
+# Poetry
+poetry.lock
+
+# Audio output
+audio_chapters/
+*.mp3
+*.wav
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log

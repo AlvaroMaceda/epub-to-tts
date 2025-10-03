@@ -1,0 +1,14 @@
+[project]
+name = "tts"
+version = "0.1.0"
+description = "A simple Text-to-Speech (TTS) Python project."
+authors = [
+    { name = "Your Name", email = "your.email@example.com" }
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
