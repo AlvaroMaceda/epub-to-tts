@@ -1,6 +1,6 @@
 # TTS Audiobook Generator
 
-Convert EPUB books into audiobooks using Google Text-to-Speech (gTTS).
+Convert EPUB books into audiobooks using Microsoft Edge TTS.
 
 ## Installation
 
@@ -11,28 +11,40 @@ Convert EPUB books into audiobooks using Google Text-to-Speech (gTTS).
    ```
 3. Install dependencies:
    ```sh
-   poetry install
+   poetry install --no-root
    ```
 
 ## How to Run
 
+
 Run the script from the command line:
 
 ```sh
-poetry run python main.py <audiobook.epub> [--language <lang>] [--tld <tld>]
+poetry run python main.py <audiobook.epub> [--voice <voice>]
 ```
 
 - `<audiobook.epub>`: Path to your EPUB file (required)
-- `--language` or `--lang`: Language code (optional, default: `en`)
-- `--tld`: Top-level domain for accent (optional, default: `com`)
+- `--voice`: Voice for TTS (optional, default: `en-US-JennyNeural`)
 
 ### Example
 
 ```sh
-poetry run python main.py mybook.epub --language es --tld com.mx
+poetry run python main.py mybook.epub --voice es-ES-ElviraNeural
 ```
 
 All audio files will be saved in the `audio_chapters` folder.
+
+---
+
+### List available voices
+
+To see all available English and Spanish voices, run:
+
+```sh
+poetry run python list_voices.py
+```
+
+---
 
 ---
 

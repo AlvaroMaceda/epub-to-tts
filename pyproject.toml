@@ -3,11 +3,15 @@ name = "tts"
 version = "0.1.0"
 description = "A simple Text-to-Speech (TTS) Python project."
 authors = [
-    { name = "Your Name", email = "your.email@example.com" }
+    { name = "Alvaro Maceda", email = "alvaro@alvaromaceda.es" }
 ]
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["ebooklib (>=0.19,<0.20)", "beautifulsoup4 (>=4.14.2,<5.0.0)", "gtts (>=2.5.4,<3.0.0)"]
+dependencies = [
+    "ebooklib (>=0.19,<0.20)",
+    "beautifulsoup4 (>=4.14.2,<5.0.0)",
+    "edge-tts (>=6.1.10,<7.0.0)"
+]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

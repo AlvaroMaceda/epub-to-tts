@@ -1,10 +1,9 @@
 import os
 from ebooklib import epub, ITEM_DOCUMENT
 from bs4 import BeautifulSoup
+from gtts import gTTS
 import re
 import argparse
-import asyncio
-from edge_tts import Communicate
 
 # -----------------------
 # Configuration
@@ -35,13 +34,14 @@ def chunk_text(text, max_len=MAX_CHARS):
 def main():
     parser = argparse.ArgumentParser(description="EPUB to Audiobook Converter")
     parser.add_argument("audiobook", type=str, help="Path to the EPUB file")
-    parser.add_argument("--voice", type=str, default="en-US-JennyNeural", help="Voice for TTS (default: en-US-JennyNeural)")
+    parser.add_argument("--language", "--lang", type=str, default="en", help="Language code (default: en)")
+    parser.add_argument("--tld", type=str, default="com", help="Top-level domain for accent (default: com)")
     args = parser.parse_args()
 
     EPUB_FILE = args.audiobook
-    VOICE = args.voice
+    LANG = args.language
+    TLD = args.tld
 
-    print(f"Using voice: {VOICE}")
     book = epub.read_epub(EPUB_FILE)
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
     chapter_number = 1
@@ -53,20 +53,10 @@ def main():
             title = sanitize_filename(title[:50])
             print(f"Processing {title}...")
             chunks = chunk_text(chapter_text, MAX_CHARS)
-            async def save_chunk(chunk, filename, voice=VOICE, chunk_num=None):
-                if chunk_num and chunk_num > 1:
-                    print(f"  Processing chunk {chunk_num} for {filename}...")
-                communicate = Communicate(chunk, voice)
-                await communicate.save(filename)
-
-            async def process_chunks():
-                tasks = []
-                for i, chunk in enumerate(chunks, start=1):
-                    filename = f"{OUTPUT_FOLDER}/{title}_part{i}.mp3" if len(chunks) > 1 else f"{OUTPUT_FOLDER}/{title}.mp3"
-                    tasks.append(save_chunk(chunk, filename, VOICE, chunk_num=i))
-                await asyncio.gather(*tasks)
-
-            asyncio.run(process_chunks())
+            for i, chunk in enumerate(chunks, start=1):
+                filename = f"{OUTPUT_FOLDER}/{title}_part{i}.mp3" if len(chunks) > 1 else f"{OUTPUT_FOLDER}/{title}.mp3"
+                tts = gTTS(text=chunk, lang=LANG, tld=TLD)
+                tts.save(filename)
             chapter_number += 1
     print(f"Done! All chapters saved in '{OUTPUT_FOLDER}'")
 
