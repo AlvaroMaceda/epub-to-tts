@@ -20,16 +20,19 @@ Convert EPUB books into audiobooks using Microsoft Edge TTS.
 Run the script from the command line:
 
 ```sh
-poetry run python main.py <audiobook.epub> [--voice <voice>]
+poetry run python main.py <audiobook.epub> [--voice <voice>] [--rate <rate>] [--pitch <pitch>] [--volume <volume>]
 ```
 
 - `<audiobook.epub>`: Path to your EPUB file (required)
 - `--voice`: Voice for TTS (optional, default: `en-US-JennyNeural`)
+- `--rate`: Speech rate (optional, e.g. `+20%`)
+- `--pitch`: Speech pitch (optional, e.g. `+5Hz`)
+- `--volume`: Speech volume (optional, e.g. `+10dB`)
 
 ### Example
 
 ```sh
-poetry run python main.py mybook.epub --voice es-ES-ElviraNeural
+poetry run python main.py mybook.epub --voice es-ES-ElviraNeural --rate "+10%" --pitch "+2Hz" --volume "+5dB"
 ```
 
 All audio files will be saved in the `audio_chapters` folder.
