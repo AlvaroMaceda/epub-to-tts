@@ -57,7 +57,13 @@ def main():
         "--start-chapter",
         type=int,
         default=1,
-        help="Start from this chapter number (default: 1)",
+        help="Start from this chapter number (1-indexed, default: 1)",
+    )
+    parser.add_argument(
+        "--end-chapter",
+        type=int,
+        default=None,
+        help="End at this chapter number (1-indexed, optional)",
     )
     args = parser.parse_args()
 
@@ -67,6 +73,7 @@ def main():
     PITCH = args.pitch
     VOLUME = args.volume
     START_CHAPTER = args.start_chapter
+    END_CHAPTER = args.end_chapter
 
     print(f"Using voice: {VOICE}")
     if RATE:
@@ -76,45 +83,61 @@ def main():
     if VOLUME:
         print(f"Volume: {VOLUME}")
     book = epub.read_epub(EPUB_FILE)
-    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
-    for idx, item in enumerate(book.get_items_of_type(ITEM_DOCUMENT)):
 
-        if idx < START_CHAPTER:
-            continue
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+    chapter_num = 0
+
+    for idx, item in enumerate(book.get_items_of_type(ITEM_DOCUMENT)):
 
         soup = BeautifulSoup(item.get_content(), "html.parser")
         chapter_text = soup.get_text().strip()
-        if chapter_text:
-            title = soup.title.string if soup.title else f"Chapter_{idx}"
-            title = sanitize_filename(title[:50])
-            print(f"Processing {title}...")
-            chunks = chunk_text(chapter_text, MAX_CHARS)
+        if not chapter_text:
+            continue
 
-            async def save_chunk(chunk, filename, voice=VOICE, chunk_num=1):
-                if chunk_num > 1:
-                    print(f"  Processing chunk {chunk_num} for {filename}...")
-                kwargs = {}
-                if RATE is not None:
-                    kwargs["rate"] = RATE
-                if PITCH is not None:
-                    kwargs["pitch"] = PITCH
-                if VOLUME is not None:
-                    kwargs["volume"] = VOLUME
-                communicate = Communicate(chunk, voice, **kwargs)
-                await communicate.save(filename)
+        chapter_num +=1
 
-            async def process_chunks():
-                tasks = []
-                for i, chunk in enumerate(chunks, start=1):
-                    filename = (
-                        f"{OUTPUT_FOLDER}/{title}_part{i}.mp3"
-                        if len(chunks) > 1
-                        else f"{OUTPUT_FOLDER}/{title}.mp3"
-                    )
-                    tasks.append(save_chunk(chunk, filename, VOICE, chunk_num=i))
+        # print(f"Chapter index: {idx} chapter num: {chapter_num} start_chapter: {START_CHAPTER} end_chapter: {END_CHAPTER}")
+        if chapter_num < START_CHAPTER:
+            # print(f"skipping chapter {chapter_num}, start chapter is {START_CHAPTER}")
+            continue
+        if END_CHAPTER is not None and chapter_num > END_CHAPTER:
+            # print(f"end chapter reached: {END_CHAPTER}")
+            # print(f"chapter num: {chapter_num}")
+            break
+
+        print(f"Chapter {chapter_num} length: {len(chapter_text)} characters")
+        title = soup.title.string if soup.title else f"Chapter_{chapter_num}"
+        title = sanitize_filename(title[:50])
+        print(f"Processing {title}...")
+        chunks = chunk_text(chapter_text, MAX_CHARS)
+
+        async def save_chunk(chunk, filename, voice=VOICE, chunk_num=1):
+            if chunk_num > 1:
+                print(f"  Processing chunk {chunk_num} for {filename}...")
+            kwargs = {}
+            if RATE is not None:
+                kwargs["rate"] = RATE
+            if PITCH is not None:
+                kwargs["pitch"] = PITCH
+            if VOLUME is not None:
+                kwargs["volume"] = VOLUME
+            communicate = Communicate(chunk, voice, **kwargs)
+            await communicate.save(filename)
+
+        async def process_chunks():
+            tasks = []
+            for i, chunk in enumerate(chunks, start=1):
+                filename = (
+                    f"{OUTPUT_FOLDER}/{title}_part{i}.mp3"
+                    if len(chunks) > 1
+                    else f"{OUTPUT_FOLDER}/{title}.mp3"
+                )
+                tasks.append(save_chunk(chunk, filename, VOICE, chunk_num=i))
                 await asyncio.gather(*tasks)
 
-            asyncio.run(process_chunks())
+        asyncio.run(process_chunks())
+
     print(f"Done! All chapters saved in '{OUTPUT_FOLDER}'")
 
 
