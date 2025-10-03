@@ -26,3 +26,10 @@ Thumbs.db
 
 # Misc
 *.log
+
+# Build artifacts
+dist/
+build/
+
+# Egg-info build artifacts
+*.egg-info/

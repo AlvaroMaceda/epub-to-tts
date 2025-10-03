@@ -1,5 +1,5 @@
 [project]
-name = "tts"
+name = "epub-to-tts"
 version = "0.1.0"
 description = "A simple Text-to-Speech (TTS) Python project."
 authors = [
@@ -12,6 +12,19 @@ dependencies = [
     "beautifulsoup4 (>=4.14.2,<5.0.0)",
     "edge-tts (>=6.1.10,<7.0.0)"
 ]
+[tool.poetry]
+name = "epub-to-tts"
+version = "0.1.0"
+description = "Convert EPUB books to TTS audio files."
+authors = ["Alvaro Maceda <your@email.com>"]
+license = "MIT"
+packages = [
+     { include = "epub-to-tts", from = "src" }
+]
+
+[tool.poetry.scripts]
+epub-to-tts = "epub_to_tts.main:main"
+epub-to-tts-list-voices = "epub_to_tts.list_voices:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
