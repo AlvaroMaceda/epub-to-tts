@@ -1,5 +1,5 @@
 import os
-from ebooklib import epub
+from ebooklib import epub, ITEM_DOCUMENT
 from bs4 import BeautifulSoup
 from gtts import gTTS
 import re
@@ -45,7 +45,7 @@ def main():
     book = epub.read_epub(EPUB_FILE)
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
     chapter_number = 1
-    for item in book.get_items_of_type(epub.ITEM_DOCUMENT):
+    for item in book.get_items_of_type(ITEM_DOCUMENT):
         soup = BeautifulSoup(item.get_content(), 'html.parser')
         chapter_text = soup.get_text().strip()
         if chapter_text:
